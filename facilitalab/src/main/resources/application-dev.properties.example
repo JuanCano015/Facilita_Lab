@@ -1,0 +1,19 @@
+# ═══════════════════════════════════════════════════════════════
+# application-dev.properties.example
+# Copie este arquivo para application-dev.properties e preencha
+# com suas credenciais reais.
+#
+#   cp application-dev.properties.example application-dev.properties
+# ═══════════════════════════════════════════════════════════════
+
+# ── Banco de dados ──────────────────────────────────────────
+spring.datasource.username=root
+spring.datasource.password=SUA_SENHA_DO_MYSQL_AQUI
+
+# ── E-mail (notificações) ────────────────────────────────────
+spring.mail.username=SEU_EMAIL@gmail.com
+spring.mail.password=SUA_APP_PASSWORD_AQUI
+
+# ── JWT ──────────────────────────────────────────────────────
+jwt.secret=SUA_CHAVE_JWT_SECRETA_COM_PELO_MENOS_32_CARACTERES
+jwt.expiration=28800000
