@@ -6,6 +6,7 @@ function authFetch(url, options = {}) {
     return fetch(url, {
         ...options,
         headers: {
+            ...options.headers,
             'Authorization': 'Bearer ' + localStorage.getItem('token')
         }
     });
