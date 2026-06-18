@@ -1,83 +1,519 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cadastro de Pedido – Facilita Lab</title>
-    <link rel="stylesheet" href="/css/layout.css" />
-    <link rel="stylesheet" href="/css/cadastro.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Novo Pedido — FacilitaLab</title>
+  <!-- Google Fonts — mesma tipografia do design system -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================
+   DESIGN SYSTEM — variáveis e componentes
+   copiados do protótipo FacilitaLab.html
+   ========================================= */
+:root {
+  --navy:        #0A2540;
+  --navy-mid:    #0D2E50;
+  --navy-light:  #133660;
+  --blue:        #2E86DE;
+  --blue-light:  #4D9FE8;
+  --blue-glow:   rgba(46,134,222,0.18);
+  --white:       #FFFFFF;
+  --gray-50:     #F7F9FC;
+  --gray-100:    #EEF2F7;
+  --gray-200:    #D8E2EF;
+  --gray-300:    #A9BBCF;
+  --gray-500:    #6B859E;
+  --gray-700:    #3D556A;
+  --green:       #00C896;
+  --green-bg:    rgba(0,200,150,0.12);
+  --amber:       #F59E0B;
+  --amber-bg:    rgba(245,158,11,0.12);
+  --red:         #EF4444;
+  --red-bg:      rgba(239,68,68,0.12);
+  --purple:      #8B5CF6;
+  --purple-bg:   rgba(139,92,246,0.12);
+  --radius-sm:   6px;
+  --radius:      10px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --shadow-sm:   0 1px 3px rgba(10,37,64,0.08), 0 1px 2px rgba(10,37,64,0.06);
+  --shadow:      0 4px 16px rgba(10,37,64,0.10), 0 2px 6px rgba(10,37,64,0.06);
+  --shadow-lg:   0 12px 40px rgba(10,37,64,0.14), 0 4px 12px rgba(10,37,64,0.08);
+  --shadow-blue: 0 4px 24px rgba(46,134,222,0.28);
+  --font-sans:   'DM Sans', sans-serif;
+  --font-mono:   'Space Mono', monospace;
+  --sidebar-w:   240px;
+  --header-h:    64px;
+  --transition:  .22s cubic-bezier(.4,0,.2,1);
+}
+
+/* Reset global */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-sans); font-size: 14px; color: var(--navy); background: var(--gray-50); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: var(--font-sans); border: none; background: none; }
+input, select, textarea { font-family: var(--font-sans); }
+ul { list-style: none; }
+
+/* ── LAYOUT ── */
+.app { display: flex; min-height: 100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar { width: var(--sidebar-w); background: var(--navy); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; border-right: 1px solid rgba(255,255,255,0.05); }
+.sidebar__logo { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 10px; }
+.sidebar__logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--blue), var(--blue-light)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.sidebar__logo-text { font-size: 16px; font-weight: 700; color: var(--white); letter-spacing: -.2px; }
+.sidebar__logo-text span { color: #4D9FE8; }
+.sidebar__profile { padding: 14px 16px; margin: 12px 12px 0; background: rgba(46,134,222,0.1); border: 1px solid rgba(46,134,222,0.2); border-radius: var(--radius); display: flex; align-items: center; gap: 10px; }
+.sidebar__avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--blue-light)); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--white); flex-shrink: 0; }
+.sidebar__profile-name { font-size: 13px; font-weight: 600; color: var(--white); }
+.sidebar__profile-role { font-size: 11px; color: var(--blue-light); }
+.sidebar__nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+.sidebar__section-label { font-size: 10px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin: 12px 0 6px; }
+.sidebar__item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm); color: var(--gray-300); font-size: 13px; font-weight: 500; transition: var(--transition); cursor: pointer; position: relative; text-decoration: none; }
+.sidebar__item:hover { background: rgba(46,134,222,0.1); color: var(--white); }
+.sidebar__item.active { background: var(--blue-glow); color: var(--white); border: 1px solid rgba(46,134,222,0.3); }
+.sidebar__item.active::before { content: ''; position: absolute; left: -12px; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; background: var(--blue); border-radius: 0 3px 3px 0; }
+.sidebar__item-icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar__footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.06); }
+.sidebar__logout { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm); color: var(--gray-500); font-size: 13px; font-weight: 500; transition: var(--transition); cursor: pointer; width: 100%; text-align: left; }
+.sidebar__logout:hover { background: var(--red-bg); color: var(--red); }
+
+/* ── MAIN LAYOUT ── */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.topbar { height: var(--header-h); background: var(--white); border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 50; }
+.topbar__left { display: flex; align-items: center; gap: 16px; }
+.topbar__breadcrumb { font-size: 13px; color: var(--gray-500); display: flex; align-items: center; gap: 6px; }
+.topbar__breadcrumb strong { color: var(--navy); font-weight: 600; }
+.page-content { flex: 1; padding: 28px; animation: fadeIn .3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── PAGE HEADER ── */
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.page-header__title { font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: -.3px; }
+.page-header__sub { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+
+/* ── CARDS ── */
+.card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
+.card__header { padding: 18px 22px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+.card__title { font-size: 15px; font-weight: 700; color: var(--navy); }
+.card__body { padding: 22px; }
+
+/* ── FORMS ── */
+.app-form { display: flex; flex-direction: column; gap: 18px; }
+.form-group { margin-bottom: 0; }
+.app-label { display: block; font-size: 12px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+.app-input, .app-select, .app-textarea { width: 100%; background: var(--white); border: 1.5px solid var(--gray-200); border-radius: var(--radius); padding: 10px 14px; font-size: 14px; color: var(--navy); transition: var(--transition); outline: none; font-family: var(--font-sans); }
+.app-input:focus, .app-select:focus, .app-textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-glow); }
+.app-textarea { resize: vertical; min-height: 90px; }
+.app-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B859E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; background-size: 12px; padding-right: 36px; }
+
+/* ── UPLOAD ZONE ── */
+.upload-zone { border: 2px dashed var(--gray-200); border-radius: var(--radius-lg); padding: 36px 20px; text-align: center; cursor: pointer; transition: var(--transition); background: var(--gray-50); }
+.upload-zone:hover { border-color: var(--blue); background: var(--blue-glow); }
+.upload-zone__icon { font-size: 36px; margin-bottom: 10px; }
+.upload-zone__text { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+.upload-zone__sub  { font-size: 12px; color: var(--gray-500); }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 600; transition: var(--transition); white-space: nowrap; }
+.btn--primary { background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%); color: var(--white); box-shadow: var(--shadow-blue); }
+.btn--primary:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(46,134,222,0.4); }
+.btn--primary:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn--ghost { background: transparent; color: var(--gray-500); border: 1.5px solid var(--gray-200); }
+.btn--ghost:hover { background: var(--gray-100); color: var(--navy); }
+.btn--full { width: 100%; }
+.btn--lg { padding: 13px 24px; font-size: 15px; }
+.btn--sm { padding: 6px 14px; font-size: 12px; }
+
+/* ── TOAST ── */
+.toast-container { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 1000; }
+.toast { background: var(--navy); color: var(--white); padding: 12px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; animation: toastIn .3s ease, toastOut .3s ease 2.7s forwards; border-left: 3px solid var(--blue); max-width: 320px; }
+.toast--success { border-color: var(--green); }
+.toast--error   { border-color: var(--red); }
+@keyframes toastIn  { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+/* ── LAYOUT ESPECÍFICO: duas colunas ── */
+.grid-1-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 900px) { .grid-1-2 { grid-template-columns: 1fr; } }
+
+/* ── ERRO INLINE ── */
+.field-error { font-size: 12px; color: var(--red); margin-top: 4px; display: none; }
+.field-error.visible { display: block; }
+</style>
 </head>
-
 <body>
-    <div class="app">
-        <!-- Substituiu: <aside th:replace="~{fragments/sidebar :: sidebar(${activePage})}"></aside> -->
-        <div id="sidebar-container"></div>
 
-        <main class="content">
-            <div class="page-header">
-                <a href="/lista-pedidos" class="btn-voltar"><span class="btn-voltar-seta">&#8592;</span> Voltar para a lista</a>
-                <h1>Novo Pedido</h1>
-                <span class="page-sub">Preencha os dados para cadastrar</span>
-            </div>
+<!-- ============================================================
+     ESTRUTURA: sidebar fixa + main (topbar + conteúdo)
+     Segue o padrão de layout do protótipo FacilitaLab.html
+     ============================================================ -->
+<div class="app">
 
-            <div class="card">
-                <div class="field">
-                    <label for="cor">Cor <span class="obrigatorio">*</span></label>
-                    <input type="text" id="cor" placeholder="Ex: A2, Branco, OM3" maxlength="50" />
-                </div>
-
-                <div class="field">
-                    <label for="tipoProtese">Tipo de Prótese <span class="obrigatorio">*</span></label>
-                    <select id="tipoProtese">
-                        <option value="">Selecione...</option>
-                        <option value="COROA">Coroa</option>
-                        <option value="PONTE">Ponte</option>
-                        <option value="IMPLANTE">Implante</option>
-                        <option value="PROVISORIO">Provisório</option>
-                        <option value="FACETA">Faceta</option>
-                        <option value="INLAY">Inlay</option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label for="material">Material <span class="obrigatorio">*</span></label>
-                    <select id="material">
-                        <option value="">Selecione...</option>
-                        <option value="ZIRCONIA">Zircônia</option>
-                        <option value="RESINA">Resina</option>
-                        <option value="METAL">Metal</option>
-                        <option value="CERAMICA">Cerâmica</option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label for="prazoEntrega">Prazo de Entrega <span class="obrigatorio">*</span></label>
-                    <input type="date" id="prazoEntrega" />
-                </div>
-
-                <div class="field">
-                    <label for="dentistaId">Dentista <span class="obrigatorio">*</span></label>
-                    <select id="dentistaId">
-                        <option value="">Carregando dentistas...</option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label for="observacoes">Observações</label>
-                    <textarea id="observacoes" placeholder="Observações adicionais (opcional)" maxlength="500" rows="4"></textarea>
-                </div>
-
-                <button id="btnCadastrar" class="btn-primary" onclick="cadastrar()">Cadastrar</button>
-                <div id="mensagem"></div>
-            </div>
-        </main>
+  <!-- ── SIDEBAR ─────────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <div class="sidebar__logo-icon">🦷</div>
+      <div class="sidebar__logo-text">Facilita<span>Lab</span></div>
     </div>
+    <!-- Perfil do usuário logado — preenchido via JS -->
+    <div class="sidebar__profile">
+      <div class="sidebar__avatar" id="sidebar-avatar">D</div>
+      <div>
+        <div class="sidebar__profile-name" id="sidebar-nome">Dentista</div>
+        <div class="sidebar__profile-role">Dentista</div>
+      </div>
+    </div>
+    <nav class="sidebar__nav">
+      <div class="sidebar__section-label">Principal</div>
+      <a href="/dashboard-dentista.html" class="sidebar__item">
+        <span class="sidebar__item-icon">🏠</span> Dashboard
+      </a>
+      <a href="/cadastro-pedido.html" class="sidebar__item active">
+        <span class="sidebar__item-icon">➕</span> Novo Pedido
+      </a>
+      <a href="/lista-pedido.html" class="sidebar__item">
+        <span class="sidebar__item-icon">📋</span> Meus Pedidos
+      </a>
+    </nav>
+    <div class="sidebar__footer">
+      <button class="sidebar__logout" onclick="logout()"><span>🚪</span> Sair</button>
+    </div>
+  </aside>
 
-    <!-- sidebar.js carrega o HTML da sidebar e define o item ativo via pathname -->
-    <script src="/js/auth.js"></script>
-    <script src="/js/sidebar.js"></script>
-    <script src="/js/cadastro-pedido.js"></script>
+  <!-- ── MAIN ────────────────────────────────────────────────── -->
+  <main class="main">
+    <!-- Header fixo com breadcrumb -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="topbar__breadcrumb">
+          <span>FacilitaLab</span><span>›</span><strong>Novo Pedido</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- Conteúdo da página -->
+    <div class="page-content">
+      <!-- Cabeçalho da página com botão de voltar -->
+      <div class="page-header">
+        <div>
+          <a href="/lista-pedido.html" class="btn btn--ghost btn--sm" style="margin-bottom:8px">← Voltar</a>
+          <div class="page-header__title">Novo Pedido</div>
+          <div class="page-header__sub">Preencha as informações do caso para enviar à triagem</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           GRID DE DUAS COLUNAS:
+           Esquerda = Formulário de dados do pedido
+           Direita  = Upload STL + Checklist visual
+           ============================================================ -->
+      <div class="grid-1-2">
+
+        <!-- ── COLUNA ESQUERDA: FORMULÁRIO ── -->
+        <div class="card">
+          <div class="card__header"><div class="card__title">📋 Informações do Pedido</div></div>
+          <div class="card__body">
+            <form id="form-pedido" class="app-form" novalidate>
+
+              <!-- Campo: Cor/Shade — texto livre, máximo 50 caracteres -->
+              <div class="form-group">
+                <label class="app-label" for="cor">Cor / Shade *</label>
+                <input class="app-input" type="text" id="cor" placeholder="Ex: A2, BL2, OM3" maxlength="50">
+                <div class="field-error" id="erro-cor"></div>
+              </div>
+
+              <!-- Campo: Tipo de Prótese — select com valores exatos do enum do backend -->
+              <div class="form-group">
+                <label class="app-label" for="tipoProtese">Tipo de Prótese *</label>
+                <select class="app-select" id="tipoProtese">
+                  <option value="">Selecione...</option>
+                  <option value="COROA">Coroa</option>
+                  <option value="PONTE">Ponte</option>
+                  <option value="IMPLANTE">Implante</option>
+                  <option value="PROVISORIO">Provisório</option>
+                  <option value="FACETA">Faceta</option>
+                  <option value="INLAY">Inlay</option>
+                </select>
+                <div class="field-error" id="erro-tipoProtese"></div>
+              </div>
+
+              <!-- Campo: Material — select com valores exatos do enum do backend -->
+              <div class="form-group">
+                <label class="app-label" for="material">Material *</label>
+                <select class="app-select" id="material">
+                  <option value="">Selecione...</option>
+                  <option value="ZIRCONIA">Zircônia</option>
+                  <option value="RESINA">Resina</option>
+                  <option value="METAL">Metal</option>
+                  <option value="CERAMICA">Cerâmica</option>
+                </select>
+                <div class="field-error" id="erro-material"></div>
+              </div>
+
+              <!-- Campo: Prioridade — select com valores exatos do enum do backend -->
+              <div class="form-group">
+                <label class="app-label" for="prioridade">Prioridade *</label>
+                <select class="app-select" id="prioridade">
+                  <option value="">Selecione...</option>
+                  <option value="URGENTE">Urgente</option>
+                  <option value="NORMAL">Normal</option>
+                </select>
+                <div class="field-error" id="erro-prioridade"></div>
+              </div>
+
+              <!-- Campo: Prazo de Entrega — date, apenas datas futuras permitidas -->
+              <div class="form-group">
+                <label class="app-label" for="prazoEntrega">Prazo de Entrega *</label>
+                <input class="app-input" type="date" id="prazoEntrega">
+                <div class="field-error" id="erro-prazoEntrega"></div>
+              </div>
+
+              <!-- Campo: Observações — textarea opcional, máximo 500 caracteres -->
+              <div class="form-group">
+                <label class="app-label" for="observacoes">Observações</label>
+                <textarea class="app-textarea" id="observacoes" placeholder="Informações adicionais para o laboratório (opcional)" maxlength="500"></textarea>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ── COLUNA DIREITA: UPLOAD + CHECKLIST + BOTÃO SUBMIT ── -->
+        <div style="display:flex;flex-direction:column;gap:20px">
+
+          <!-- Card de upload de arquivo STL (visual/PoC — sem lógica real de upload) -->
+          <div class="card">
+            <div class="card__header"><div class="card__title">📎 Arquivo STL</div></div>
+            <div class="card__body">
+              <div class="upload-zone" id="stl-upload-zone">
+                <div class="upload-zone__icon">🦷</div>
+                <div class="upload-zone__text">Clique para enviar o STL</div>
+                <div class="upload-zone__sub">Formatos: .stl · .ply · .obj</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Checklist visual estático — itens que o dentista deve confirmar antes de enviar -->
+          <div class="card">
+            <div class="card__header"><div class="card__title">🔍 Checklist</div></div>
+            <div class="card__body" style="display:flex;flex-direction:column;gap:10px">
+              <label style="display:flex;gap:8px;align-items:center;font-size:13px;cursor:pointer">
+                <input type="checkbox" checked> Scan completo
+              </label>
+              <label style="display:flex;gap:8px;align-items:center;font-size:13px;cursor:pointer">
+                <input type="checkbox" checked> Antagonistas
+              </label>
+              <label style="display:flex;gap:8px;align-items:center;font-size:13px;cursor:pointer">
+                <input type="checkbox" checked> Shade definida
+              </label>
+              <label style="display:flex;gap:8px;align-items:center;font-size:13px;cursor:pointer">
+                <input type="checkbox" checked> Prazo acordado
+              </label>
+            </div>
+          </div>
+
+          <!-- Botão de submit principal — envia o pedido para a API -->
+          <button type="button" id="btn-submit" class="btn btn--primary btn--full btn--lg" onclick="enviarPedido()">
+            📤 Enviar para Triagem
+          </button>
+        </div>
+      </div><!-- /grid-1-2 -->
+    </div><!-- /page-content -->
+  </main>
+</div><!-- /app -->
+
+<!-- Container para notificações toast -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+<!-- auth.js contém authFetch() que injeta o JWT automaticamente -->
+<script src="/js/auth.js"></script>
+
+<script>
+// ============================================================
+// LÓGICA DA PÁGINA: CADASTRO DE PEDIDO
+// Responsabilidades:
+// 1. Validar campos obrigatórios antes de enviar
+// 2. Montar o JSON e chamar POST /pedidos via authFetch
+// 3. Exibir feedback (toast de sucesso ou erro inline)
+// 4. Redirecionar para lista-pedido.html em caso de sucesso
+// ============================================================
+
+// --- Inicialização ---
+// Define a data mínima do campo prazoEntrega como amanhã (só permite datas futuras)
+(function initDateMin() {
+  const hoje = new Date();
+  hoje.setDate(hoje.getDate() + 1);
+  const min = hoje.toISOString().split('T')[0];
+  document.getElementById('prazoEntrega').setAttribute('min', min);
+})();
+
+// Preenche o nome do dentista na sidebar a partir do localStorage
+(function initSidebar() {
+  const nome = localStorage.getItem('nome') || 'Dentista';
+  document.getElementById('sidebar-nome').textContent = nome;
+  document.getElementById('sidebar-avatar').textContent = nome.charAt(0).toUpperCase();
+})();
+
+/**
+ * Função de logout — remove dados de sessão e redireciona para login
+ */
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('nome');
+  localStorage.removeItem('perfil');
+  localStorage.removeItem('id');
+  window.location.href = '/login.html';
+}
+
+/**
+ * Exibe uma mensagem de erro abaixo de um campo específico
+ * @param {string} campoId - ID do elemento .field-error (ex: "erro-cor")
+ * @param {string} mensagem - Texto do erro a exibir
+ */
+function mostrarErro(campoId, mensagem) {
+  const el = document.getElementById(campoId);
+  el.textContent = mensagem;
+  el.classList.add('visible');
+}
+
+/**
+ * Limpa todas as mensagens de erro inline dos campos
+ */
+function limparErros() {
+  document.querySelectorAll('.field-error').forEach(el => {
+    el.textContent = '';
+    el.classList.remove('visible');
+  });
+}
+
+/**
+ * Exibe uma notificação toast no canto inferior direito
+ * @param {string} mensagem - Texto da notificação
+ * @param {string} tipo - "success" ou "error" para definir a cor da borda
+ */
+function showToast(mensagem, tipo) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast toast--' + tipo;
+  toast.textContent = mensagem;
+  container.appendChild(toast);
+  // Remove o toast do DOM após a animação de saída (3 segundos)
+  setTimeout(() => toast.remove(), 3200);
+}
+
+/**
+ * Função principal — valida campos e envia o pedido para o backend
+ * Chamada pelo botão "Enviar para Triagem"
+ */
+async function enviarPedido() {
+  limparErros();
+
+  // Coleta os valores dos campos do formulário
+  const cor          = document.getElementById('cor').value.trim();
+  const tipoProtese  = document.getElementById('tipoProtese').value;
+  const material     = document.getElementById('material').value;
+  const prioridade   = document.getElementById('prioridade').value;
+  const prazoEntrega = document.getElementById('prazoEntrega').value;
+  const observacoes  = document.getElementById('observacoes').value.trim();
+
+  let valido = true;
+
+  // --- Validação dos campos obrigatórios ---
+  // Cada campo obrigatório exibe seu próprio erro inline se estiver vazio
+  if (!cor) {
+    mostrarErro('erro-cor', 'A cor/shade é obrigatória.');
+    valido = false;
+  } else if (cor.length > 50) {
+    mostrarErro('erro-cor', 'Máximo de 50 caracteres.');
+    valido = false;
+  }
+
+  if (!tipoProtese) {
+    mostrarErro('erro-tipoProtese', 'Selecione o tipo de prótese.');
+    valido = false;
+  }
+
+  if (!material) {
+    mostrarErro('erro-material', 'Selecione o material.');
+    valido = false;
+  }
+
+  if (!prioridade) {
+    mostrarErro('erro-prioridade', 'Selecione a prioridade.');
+    valido = false;
+  }
+
+  if (!prazoEntrega) {
+    mostrarErro('erro-prazoEntrega', 'Informe o prazo de entrega.');
+    valido = false;
+  } else if (new Date(prazoEntrega + 'T00:00:00') <= new Date()) {
+    mostrarErro('erro-prazoEntrega', 'O prazo deve ser uma data futura.');
+    valido = false;
+  }
+
+  // Se algum campo falhou na validação, interrompe aqui
+  if (!valido) return;
+
+  // --- Montagem do body JSON conforme esperado pelo backend ---
+  const body = {
+    cor,
+    tipoProtese,
+    material,
+    prioridade,
+    prazoEntrega,
+    observacoes: observacoes || null,
+    dentistaId: localStorage.getItem('id') ? Number(localStorage.getItem('id')) : null
+  };
+
+  // Desabilita o botão durante o envio para evitar duplo clique
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  try {
+    // Chama a API usando authFetch (injeta JWT automaticamente)
+    const res = await authFetch('/pedidos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (res.status === 201) {
+      // Sucesso: exibe toast e redireciona para a lista de pedidos
+      showToast('Pedido enviado com sucesso!', 'success');
+      setTimeout(() => { window.location.href = '/lista-pedido.html'; }, 1200);
+    } else if (res.status === 400) {
+      // Erro de validação do backend — tenta extrair mensagens detalhadas
+      try {
+        const data = await res.json();
+        const msgs = data.errors || data.message || 'Erro de validação no servidor.';
+        showToast(Array.isArray(msgs) ? msgs.join('; ') : msgs, 'error');
+      } catch {
+        showToast('Erro de validação no servidor.', 'error');
+      }
+    } else {
+      // Outro erro HTTP — exibe código e texto
+      const texto = await res.text();
+      showToast('Erro ' + res.status + ': ' + (texto || 'Erro desconhecido.'), 'error');
+    }
+  } catch (err) {
+    // Falha de rede ou erro inesperado
+    showToast('Não foi possível conectar ao servidor.', 'error');
+  } finally {
+    // Reabilita o botão independentemente do resultado
+    btn.disabled = false;
+    btn.textContent = '📤 Enviar para Triagem';
+  }
+}
+</script>
 </body>
-
 </html>

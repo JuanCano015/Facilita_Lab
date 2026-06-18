@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Triagem de Pedidos — FacilitaLab</title>
+  <!-- Google Fonts — mesma tipografia do design system -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================
+   DESIGN SYSTEM — variáveis e componentes
+   copiados do protótipo FacilitaLab.html
+   ========================================= */
+:root {
+  --navy:        #0A2540;
+  --navy-mid:    #0D2E50;
+  --navy-light:  #133660;
+  --blue:        #2E86DE;
+  --blue-light:  #4D9FE8;
+  --blue-glow:   rgba(46,134,222,0.18);
+  --white:       #FFFFFF;
+  --gray-50:     #F7F9FC;
+  --gray-100:    #EEF2F7;
+  --gray-200:    #D8E2EF;
+  --gray-300:    #A9BBCF;
+  --gray-500:    #6B859E;
+  --gray-700:    #3D556A;
+  --green:       #00C896;
+  --green-bg:    rgba(0,200,150,0.12);
+  --amber:       #F59E0B;
+  --amber-bg:    rgba(245,158,11,0.12);
+  --red:         #EF4444;
+  --red-bg:      rgba(239,68,68,0.12);
+  --purple:      #8B5CF6;
+  --purple-bg:   rgba(139,92,246,0.12);
+  --radius-sm:   6px;
+  --radius:      10px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --shadow-sm:   0 1px 3px rgba(10,37,64,0.08), 0 1px 2px rgba(10,37,64,0.06);
+  --shadow:      0 4px 16px rgba(10,37,64,0.10), 0 2px 6px rgba(10,37,64,0.06);
+  --shadow-lg:   0 12px 40px rgba(10,37,64,0.14), 0 4px 12px rgba(10,37,64,0.08);
+  --shadow-blue: 0 4px 24px rgba(46,134,222,0.28);
+  --font-sans:   'DM Sans', sans-serif;
+  --font-mono:   'Space Mono', monospace;
+  --sidebar-w:   240px;
+  --header-h:    64px;
+  --transition:  .22s cubic-bezier(.4,0,.2,1);
+}
+
+/* Reset global */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-sans); font-size: 14px; color: var(--navy); background: var(--gray-50); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; font-family: var(--font-sans); border: none; background: none; }
+input, select, textarea { font-family: var(--font-sans); }
+ul { list-style: none; }
+
+/* ── LAYOUT ── */
+.app { display: flex; min-height: 100vh; }
+
+/* ── SIDEBAR ── */
+.sidebar { width: var(--sidebar-w); background: var(--navy); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; border-right: 1px solid rgba(255,255,255,0.05); }
+.sidebar__logo { padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 10px; }
+.sidebar__logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--blue), var(--blue-light)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.sidebar__logo-text { font-size: 16px; font-weight: 700; color: var(--white); letter-spacing: -.2px; }
+.sidebar__logo-text span { color: #4D9FE8; }
+.sidebar__profile { padding: 14px 16px; margin: 12px 12px 0; background: rgba(46,134,222,0.1); border: 1px solid rgba(46,134,222,0.2); border-radius: var(--radius); display: flex; align-items: center; gap: 10px; }
+.sidebar__avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--blue-light)); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--white); flex-shrink: 0; }
+.sidebar__profile-name { font-size: 13px; font-weight: 600; color: var(--white); }
+.sidebar__profile-role { font-size: 11px; color: var(--blue-light); }
+.sidebar__nav { flex: 1; padding: 16px 12px; overflow-y: auto; }
+.sidebar__section-label { font-size: 10px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin: 12px 0 6px; }
+.sidebar__item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm); color: var(--gray-300); font-size: 13px; font-weight: 500; transition: var(--transition); cursor: pointer; position: relative; text-decoration: none; }
+.sidebar__item:hover { background: rgba(46,134,222,0.1); color: var(--white); }
+.sidebar__item.active { background: var(--blue-glow); color: var(--white); border: 1px solid rgba(46,134,222,0.3); }
+.sidebar__item.active::before { content: ''; position: absolute; left: -12px; top: 50%; transform: translateY(-50%); width: 3px; height: 20px; background: var(--blue); border-radius: 0 3px 3px 0; }
+.sidebar__item-icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar__badge { margin-left: auto; background: var(--blue); color: var(--white); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; min-width: 18px; text-align: center; }
+.sidebar__footer { padding: 16px 12px; border-top: 1px solid rgba(255,255,255,0.06); }
+.sidebar__logout { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm); color: var(--gray-500); font-size: 13px; font-weight: 500; transition: var(--transition); cursor: pointer; width: 100%; text-align: left; }
+.sidebar__logout:hover { background: var(--red-bg); color: var(--red); }
+
+/* ── MAIN LAYOUT ── */
+.main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.topbar { height: var(--header-h); background: var(--white); border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; position: sticky; top: 0; z-index: 50; }
+.topbar__left { display: flex; align-items: center; gap: 16px; }
+.topbar__breadcrumb { font-size: 13px; color: var(--gray-500); display: flex; align-items: center; gap: 6px; }
+.topbar__breadcrumb strong { color: var(--navy); font-weight: 600; }
+.page-content { flex: 1; padding: 28px; animation: fadeIn .3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── PAGE HEADER ── */
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.page-header__title { font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: -.3px; }
+.page-header__sub { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+
+/* ── CARDS ── */
+.card { background: var(--white); border: 1.5px solid var(--gray-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
+.card__header { padding: 18px 22px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+.card__title { font-size: 15px; font-weight: 700; color: var(--navy); }
+.card__subtitle { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+.card__body { padding: 22px; }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 600; transition: var(--transition); white-space: nowrap; }
+.btn--primary { background: linear-gradient(135deg, var(--blue) 0%, var(--blue-light) 100%); color: var(--white); box-shadow: var(--shadow-blue); }
+.btn--primary:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(46,134,222,0.4); }
+.btn--success { background: var(--green-bg); color: var(--green); border: 1.5px solid rgba(0,200,150,0.2); }
+.btn--success:hover { background: var(--green); color: var(--white); }
+.btn--danger { background: var(--red-bg); color: var(--red); border: 1.5px solid rgba(239,68,68,0.2); }
+.btn--danger:hover { background: var(--red); color: var(--white); }
+.btn--ghost { background: transparent; color: var(--gray-500); border: 1.5px solid var(--gray-200); }
+.btn--ghost:hover { background: var(--gray-100); color: var(--navy); }
+.btn--sm { padding: 6px 14px; font-size: 12px; }
+
+/* ── TABLE ── */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { background: var(--gray-50); padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: .5px; border-bottom: 2px solid var(--gray-200); }
+.data-table td { padding: 12px 14px; border-bottom: 1px solid var(--gray-100); font-size: 13px; color: var(--navy); }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--gray-50); }
+
+/* ── BADGES ── */
+.badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; white-space: nowrap; }
+.badge::before { content: '\25CF'; font-size: 8px; }
+.badge--urgent  { background: var(--red-bg);   color: var(--red); }
+.badge--normal  { background: var(--green-bg); color: var(--green); }
+
+/* ── TOAST ── */
+.toast-container { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 1000; }
+.toast { background: var(--navy); color: var(--white); padding: 12px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; animation: toastIn .3s ease, toastOut .3s ease 2.7s forwards; border-left: 3px solid var(--blue); max-width: 320px; }
+.toast--success { border-color: var(--green); }
+.toast--error   { border-color: var(--red); }
+@keyframes toastIn  { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+/* ── EMPTY STATE ── */
+.empty-state { text-align: center; padding: 48px 24px; color: var(--gray-500); }
+.empty-state__icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state__text { font-size: 15px; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
+.empty-state__sub  { font-size: 13px; }
+
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(10,37,64,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 200; opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+.modal-overlay.visible { opacity: 1; pointer-events: all; }
+.modal { background: var(--white); border-radius: var(--radius-lg); padding: 28px; width: 100%; max-width: 440px; box-shadow: var(--shadow-lg); transform: translateY(16px); transition: transform .25s ease; }
+.modal-overlay.visible .modal { transform: translateY(0); }
+.modal__title { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.modal__sub { font-size: 13px; color: var(--gray-500); margin-bottom: 18px; }
+.modal__textarea { width: 100%; background: var(--white); border: 1.5px solid var(--gray-200); border-radius: var(--radius); padding: 10px 14px; font-size: 14px; color: var(--navy); transition: var(--transition); outline: none; font-family: var(--font-sans); resize: vertical; min-height: 90px; }
+.modal__textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-glow); }
+.modal__actions { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
+.modal__error { font-size: 12px; color: var(--red); margin-top: 6px; display: none; }
+
+/* ── AÇÕES DA TABELA ── */
+.acoes-cell { display: flex; gap: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     ESTRUTURA: sidebar fixa + main (topbar + conteúdo)
+     Tela da Recepção para processar pedidos aguardando triagem
+     ============================================================ -->
+<div class="app">
+
+  <!-- ── SIDEBAR ─────────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <div class="sidebar__logo-icon">🦷</div>
+      <div class="sidebar__logo-text">Facilita<span>Lab</span></div>
+    </div>
+    <!-- Perfil do usuário logado — preenchido via JS -->
+    <div class="sidebar__profile">
+      <div class="sidebar__avatar" id="sidebar-avatar">R</div>
+      <div>
+        <div class="sidebar__profile-name" id="sidebar-nome">Recepção</div>
+        <div class="sidebar__profile-role">Recepção</div>
+      </div>
+    </div>
+    <nav class="sidebar__nav">
+      <div class="sidebar__section-label">Principal</div>
+      <a href="/dashboard.html" class="sidebar__item">
+        <span class="sidebar__item-icon">🏠</span> Dashboard
+      </a>
+      <a href="/triagem.html" class="sidebar__item active">
+        <span class="sidebar__item-icon">🔍</span> Triagem
+        <span class="sidebar__badge" id="badge-count">0</span>
+      </a>
+      <a href="/lista-pedido.html" class="sidebar__item">
+        <span class="sidebar__item-icon">📋</span> Todos os Pedidos
+      </a>
+    </nav>
+    <div class="sidebar__footer">
+      <button class="sidebar__logout" onclick="logout()"><span>🚪</span> Sair</button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ────────────────────────────────────────────────── -->
+  <main class="main">
+    <!-- Header fixo com breadcrumb -->
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="topbar__breadcrumb">
+          <span>FacilitaLab</span><span>›</span><strong>Triagem</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- Conteúdo da página -->
+    <div class="page-content">
+      <!-- Cabeçalho da página -->
+      <div class="page-header">
+        <div>
+          <div class="page-header__title">🔍 Triagem de Pedidos</div>
+          <div class="page-header__sub">Pedidos aguardando validação — aprove ou devolva ao dentista</div>
+        </div>
+      </div>
+
+      <!-- ============================================================
+           CARD COM TABELA DE PEDIDOS
+           Exibe os pedidos com estado AGUARDANDO_TRIAGEM
+           ============================================================ -->
+      <div class="card">
+        <div class="card__header">
+          <div>
+            <div class="card__title">Pedidos Aguardando Triagem</div>
+            <div class="card__subtitle">Valide as informações antes de encaminhar</div>
+          </div>
+        </div>
+        <div class="card__body">
+          <!-- Tabela preenchida dinamicamente via JS -->
+          <table class="data-table" id="tabela-triagem">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tipo de Prótese</th>
+                <th>Material</th>
+                <th>Prioridade</th>
+                <th>Prazo</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-triagem">
+              <!-- Linhas inseridas dinamicamente -->
+            </tbody>
+          </table>
+
+          <!-- Estado vazio — exibido quando não há pedidos pendentes -->
+          <div class="empty-state" id="empty-state" style="display:none">
+            <div class="empty-state__icon">✅</div>
+            <div class="empty-state__text">Nenhum pedido pendente</div>
+            <div class="empty-state__sub">Todos os pedidos foram processados</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /page-content -->
+  </main>
+</div><!-- /app -->
+
+<!-- ============================================================
+     MODAL: Motivo da devolução
+     Aberto ao clicar "Devolver" — pede justificativa obrigatória
+     ============================================================ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal__title">Devolver Pedido</div>
+    <div class="modal__sub">Informe o motivo da devolução para o dentista:</div>
+    <textarea class="modal__textarea" id="motivo-devolucao" placeholder="Ex: Faltam informações sobre a cor..."></textarea>
+    <div class="modal__error" id="modal-error">O motivo é obrigatório.</div>
+    <div class="modal__actions">
+      <button class="btn btn--ghost btn--sm" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn--danger btn--sm" id="btn-confirmar-devolucao" onclick="confirmarDevolucao()">Confirmar Devolução</button>
+    </div>
+  </div>
+</div>
+
+<!-- Container para notificações toast -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+<!-- auth.js contém authFetch() que injeta o JWT automaticamente -->
+<script src="/js/auth.js"></script>
+
+<script>
+// ============================================================
+// LÓGICA DA PÁGINA: TRIAGEM DE PEDIDOS
+// Responsabilidades:
+// 1. Carregar pedidos com estado AGUARDANDO_TRIAGEM ao abrir a página
+// 2. Permitir APROVAR (mover para EM_ANALISE)
+// 3. Permitir DEVOLVER (mover para AGUARDANDO_INFORMACOES) com motivo
+// 4. Exibir feedback via toast e atualizar a lista automaticamente
+// ============================================================
+
+// Variável que guarda o ID do pedido sendo devolvido (usado pelo modal)
+let pedidoParaDevolver = null;
+
+// --- Inicialização ---
+// Preenche o nome do recepcionista na sidebar a partir do localStorage
+(function initSidebar() {
+  const nome = localStorage.getItem('nome') || 'Recepção';
+  document.getElementById('sidebar-nome').textContent = nome;
+  document.getElementById('sidebar-avatar').textContent = nome.charAt(0).toUpperCase();
+})();
+
+/**
+ * Função de logout — remove dados de sessão e redireciona para login
+ */
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('nome');
+  localStorage.removeItem('perfil');
+  localStorage.removeItem('id');
+  window.location.href = '/login.html';
+}
+
+/**
+ * Exibe uma notificação toast no canto inferior direito
+ * @param {string} mensagem - Texto da notificação
+ * @param {string} tipo - "success" ou "error"
+ */
+function showToast(mensagem, tipo) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast toast--' + tipo;
+  toast.textContent = mensagem;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3200);
+}
+
+/**
+ * Formata uma data ISO (yyyy-mm-dd) para o formato brasileiro (dd/mm/yyyy)
+ */
+function formatarData(dataISO) {
+  if (!dataISO) return '—';
+  const [ano, mes, dia] = dataISO.split('-');
+  return dia + '/' + mes + '/' + ano;
+}
+
+/**
+ * Carrega os pedidos com estado AGUARDANDO_TRIAGEM do backend
+ * e renderiza na tabela. Chamada na inicialização e após cada ação.
+ */
+async function carregarPedidos() {
+  const tbody = document.getElementById('tbody-triagem');
+  const empty = document.getElementById('empty-state');
+  const tabela = document.getElementById('tabela-triagem');
+
+  try {
+    // Chama o endpoint que filtra pedidos por estado
+    const res = await authFetch('/pedidos/estado?estado=AGUARDANDO_TRIAGEM');
+
+    if (!res.ok) {
+      showToast('Erro ao carregar pedidos: ' + res.status, 'error');
+      return;
+    }
+
+    const pedidos = await res.json();
+
+    // Atualiza o badge da sidebar com a quantidade de pedidos pendentes
+    document.getElementById('badge-count').textContent = pedidos.length;
+
+    if (pedidos.length === 0) {
+      // Sem pedidos pendentes — exibe estado vazio e oculta tabela
+      tabela.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+
+    // Há pedidos — exibe tabela e oculta estado vazio
+    tabela.style.display = 'table';
+    empty.style.display = 'none';
+
+    // Renderiza cada pedido como uma linha da tabela
+    tbody.innerHTML = pedidos.map(p => `
+      <tr>
+        <td style="font-family:var(--font-mono);font-weight:700;color:var(--blue)">#${p.id}</td>
+        <td>${p.tipoProtese || '—'}</td>
+        <td>${p.material || '—'}</td>
+        <td>
+          <span class="badge badge--${(p.prioridade || '').toLowerCase() === 'urgente' ? 'urgent' : 'normal'}">
+            ${p.prioridade || '—'}
+          </span>
+        </td>
+        <td>${formatarData(p.prazoEntrega)}</td>
+        <td>
+          <div class="acoes-cell">
+            <button class="btn btn--success btn--sm" onclick="aprovar(${p.id})">✓ Aprovar</button>
+            <button class="btn btn--danger btn--sm" onclick="abrirModalDevolver(${p.id})">✕ Devolver</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+  } catch (err) {
+    // Erro de rede ou falha inesperada
+    showToast('Falha de conexão ao carregar pedidos.', 'error');
+  }
+}
+
+/**
+ * Aprova um pedido — muda o estado para EM_ANALISE via PUT
+ * @param {number} id - ID do pedido a aprovar
+ */
+async function aprovar(id) {
+  try {
+    const res = await authFetch('/pedidos/' + id + '/estado?novoEstado=EM_ANALISE', {
+      method: 'PUT'
+    });
+
+    if (res.ok) {
+      showToast('Pedido #' + id + ' aprovado com sucesso!', 'success');
+      // Recarrega a lista para refletir a mudança
+      carregarPedidos();
+    } else {
+      const texto = await res.text();
+      showToast('Erro ao aprovar: ' + (texto || res.status), 'error');
+    }
+  } catch {
+    showToast('Falha de conexão ao aprovar pedido.', 'error');
+  }
+}
+
+/**
+ * Abre o modal de devolução e armazena o ID do pedido selecionado
+ * @param {number} id - ID do pedido a devolver
+ */
+function abrirModalDevolver(id) {
+  pedidoParaDevolver = id;
+  document.getElementById('motivo-devolucao').value = '';
+  document.getElementById('modal-error').style.display = 'none';
+  document.getElementById('modal-overlay').classList.add('visible');
+}
+
+/**
+ * Fecha o modal de devolução sem executar nenhuma ação
+ */
+function fecharModal() {
+  document.getElementById('modal-overlay').classList.remove('visible');
+  pedidoParaDevolver = null;
+}
+
+/**
+ * Confirma a devolução do pedido — valida motivo e chama PUT para mudar estado
+ * O motivo é exibido no frontend (limitação do PoC: endpoint não aceita body)
+ */
+async function confirmarDevolucao() {
+  const motivo = document.getElementById('motivo-devolucao').value.trim();
+  const errorEl = document.getElementById('modal-error');
+
+  // Validação: motivo é obrigatório
+  if (!motivo) {
+    errorEl.style.display = 'block';
+    return;
+  }
+  errorEl.style.display = 'none';
+
+  try {
+    // Chama o endpoint para mudar estado para AGUARDANDO_INFORMACOES
+    // Nota: o motivo não é enviado no body (limitação conhecida do PoC)
+    const res = await authFetch('/pedidos/' + pedidoParaDevolver + '/estado?novoEstado=AGUARDANDO_INFORMACOES', {
+      method: 'PUT'
+    });
+
+    if (res.ok) {
+      showToast('Pedido #' + pedidoParaDevolver + ' devolvido ao dentista.', 'success');
+      fecharModal();
+      // Recarrega a lista para refletir a mudança
+      carregarPedidos();
+    } else {
+      const texto = await res.text();
+      showToast('Erro ao devolver: ' + (texto || res.status), 'error');
+    }
+  } catch {
+    showToast('Falha de conexão ao devolver pedido.', 'error');
+  }
+}
+
+// --- Carrega os pedidos ao abrir a página ---
+carregarPedidos();
+</script>
+</body>
+</html>
